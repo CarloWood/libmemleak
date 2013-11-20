@@ -1,0 +1,55 @@
+Stats
+[first_entry]--> BacktraceEntry (the most recent BacktraceEntry that was created)
+             ^   [          hashnext]--> {unidirectional list of BacktraceEntry with same hashes, in the order that were added (hashnext is younger)}
+             |   [              next]--> {unidirectional list of BacktraceEntry, in reverse order that they were added (next is older)}
+	     |	 [recording_interval]
+	     |	 [         intervals]-------------------------------. (points to the youngest Interval)
+	     |   [     .-> head.next]----. (most recent allocation) |
+	     |   [     |   head.prev]-.  | (oldest allocation)      |
+             |         |       ,------'  |                          |
+             |         |       |  ,------`>Header (unidirectional list of Headers (= allocations) with this backtrace. 'next' is older)
+	     |	       `-------------------[prev       ]            |
+	     |	       ^       |  |	   [       next]----.       |
+	     | 	       |       |  |	   [   interval]----|-----------> NULL (allocation was made while not recording)
+	     `-----------------------------[backtrace  ]    |       |
+             ^         |       |                 '          .       |
+             |         |       |  .              '          .       |
+             |         |       |  .              '                  |
+             |         |       |  |                         |       |
+             |         |       |  |      .------------------'       |
+             |         |       |  |  .---`>Header                   |
+	     |	       |       |  `--------[prev       ]            |
+	     |	       |       |  .--'	   [       next]----.       \
+	     | 	       |       |  |	   [   interval]----|----->-->---> Interval
+	     `-----------------------------[backtrace  ]    |    /     /   [ next]----.
+             ^         |       |  |                         |    |  NULL <-[prev ]    |
+             |         |       |  |      .------------------'<---|----|----[first]    |
+             |         |       |  |  .---`>Header                |    |               |
+	     |	       |       |  `--------[prev       ]         |    |               |
+	     |	       |       |  .--'	   [       next]----.    |    |               |
+	     | 	       |       |  |	   [   interval]----|----'    |               |
+	     `-----------------------------[backtrace  ]    |         |               |
+             ^         |       |  |                         |         |               |
+             |         |       |  |      .------------------'         |               |
+             |         |       |  |  .---`>Header                     |               |
+	     |	       |       |  `--------[prev       ]              |               |
+	     |	       |       |  .--'	   [       next]----.         | .-------------'
+	     | 	       |       |  |	   [   interval]----|----->-----`> Interval
+	     `-----------------------------[backtrace  ]    |    /    |    [ next]--> NULL (oldest Interval)
+             ^         |       |  |                         |    |    `----[ prev]
+             |         |       |  |      .------------------'<---|---------[first]
+             |         |       |  |  .---`>Header                |
+	     |	       |       |  `--------[prev       ]         |
+	     |	       |       |  .--'	   [       next]----.    |
+	     | 	       |       |  |	   [   interval]----|----'
+	     `-----------------------------[backtrace  ]    |
+             ^         |       |                 '          .
+             |         |       |  .              '          .
+             |         |       |  .              '
+             |         |       |  |      .------------------'
+             |         |       `---------`>Header
+	     |	       |          `--------[prev       ]
+	     |	       `-------------------[next       ]
+	     | 				   [   interval]----> NULL (allocation was made after recording stopped)
+	     `-----------------------------[backtrace  ]
+

@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html LANG="en_US">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="Author" content="Aleric Inglewood">
+<meta name="description" content="@PACKAGE_NAME@ version @VERSION@">
+<title>@PACKAGE_NAME@ documentation</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+<link href="@PACKAGE@.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table class="header">
+<tr>
+<td><img src="images/silvrhed.png"></td>
+<td>edit html.header</td>
+</tr>
+</table>
+
+<div class="normal">
+<hr>

@@ -1,0 +1,408 @@
+diff -rcN rb_tree.orig/Makefile.am rb_tree/Makefile.am
+*** rb_tree.orig/Makefile.am	1970-01-01 01:00:00.000000000 +0100
+--- rb_tree/Makefile.am	2010-09-14 00:26:12.000000000 +0200
+***************
+*** 0 ****
+--- 1,26 ----
++ ## Process this file with automake to generate Makefile.in
++ 
++ AUTOMAKE_OPTIONS = foreign
++ 
++ SUBDIRS = .
++ 
++ EXTRA_DIST = ${BUILT_SOURCES}
++ 
++ lib_LIBRARIES = librbtree.a
++ BUILT_SOURCES =
++ DEFS = @DEFS@
++ CFLAGS = -fPIC @CFLAGS@
++ 
++ librbtree_a_SOURCES = \
++ 	red_black_tree.c \
++ 	stack.c \
++ 	misc.c
++ 
++ librbtree_a_CFLAGS =
++ 
++ distclean-local:
++ 	rm -rf $(srcdir)/autom4te.cache
++ 	@MAINTAINER_MODE_TRUE@rm -f .all_sources *.s *.i *.ii
++ 
++ MAINTAINERCLEANFILES = $(srcdir)/Makefile.in troep* *.cgd
++ 
+diff -rcN rb_tree.orig/makefile.txt rb_tree/makefile.txt
+*** rb_tree.orig/makefile.txt	2005-01-09 21:47:50.000000000 +0100
+--- rb_tree/makefile.txt	1970-01-01 01:00:00.000000000 +0100
+***************
+*** 1,64 ****
+- 
+- # prompt> make
+- # builds everything and links in test program test_rb
+- #
+- # prompt> make mem_check
+- # Rebuilds everything using dmalloc and does memory testing.
+- # Only works if you have dmalloc installed (see http://dmalloc.com).
+- 
+- SRCS = test_red_black_tree.c red_black_tree.c stack.c misc.c
+- 
+- HDRS = red_black_tree.h stack.h misc.h
+- 
+- OBJS = red_black_tree.o stack.o test_red_black_tree.o misc.o
+- 
+- CC = gcc
+- 
+- CFLAGS = -g -Wall -pedantic
+- 
+- PROGRAM = test_rb
+- 
+- .PHONY:	mem_check clean
+- 
+- all: $(PROGRAM)
+- 
+- $(PROGRAM): 	$(OBJS)
+- 		$(CC) $(CFLAGS) $(OBJS) -o $(PROGRAM) $(DMALLOC_LIB)
+- 
+- mem_check:	
+- 		@if [ -e makefile.txt ] ; then \
+- 			echo "Using makefile.txt" ; \
+- 			$(MAKE) clean -f makefile.txt ; \
+- 			$(MAKE) $(PROGRAM) "CFLAGS=$(CFLAGS) -DDMALLOC" "DMALLOC_LIB=-ldmalloc" -f makefile.txt ; \
+- 		else \
+- 			echo "Using default makefile (i.e. no -f flag)." ; \
+- 			$(MAKE) clean ; \
+- 			$(MAKE) $(PROGRAM) "CFLAGS=$(CFLAGS) -DDMALLOC" "DMALLOC_LIB=-ldmalloc" ; \
+- 		fi
+- 		./simple_test.sh
+- 		@if [ -s unfreed.txt ] ; then \
+- 			echo " " ; \
+- 			echo "Leaked some memory.  See logfile for details." ;\
+- 		else \
+- 			echo " " ; \
+- 			echo "No memory leaks detected. " ;\
+- 			echo " " ; \
+- 			echo "Test passed. " ; \
+- 			echo " " ; \
+- 		fi
+- 
+- 
+- test_red_black_tree.o:	test_red_black_tree.c red_black_tree.c stack.c stack.h red_black_tree.h misc.h
+- 
+- red_black_tree.o:	red_black_tree.h stack.h red_black_tree.c stack.c misc.h misc.c
+- 
+- stack.o:		stack.c stack.h misc.h misc.c
+- 
+- clean:			
+- 	rm -f *.o *~ $(PROGRAM)
+- 
+- 
+- 
+- 
+- 
+- 
+--- 0 ----
+diff -rcN rb_tree.orig/misc.c rb_tree/misc.c
+*** rb_tree.orig/misc.c	2004-09-06 15:24:11.000000000 +0200
+--- rb_tree/misc.c	2010-09-14 00:30:25.000000000 +0200
+***************
+*** 18,24 ****
+  /***********************************************************************/
+  
+  
+! void Assert(int assertion, char* error) {
+    if(!assertion) {
+      printf("Assertion Failed: %s\n",error);
+      exit(-1);
+--- 18,24 ----
+  /***********************************************************************/
+  
+  
+! void Assert(int assertion, char const* error) {
+    if(!assertion) {
+      printf("Assertion Failed: %s\n",error);
+      exit(-1);
+***************
+*** 44,50 ****
+  void * SafeMalloc(size_t size) {
+    void * result;
+  
+!   if ( (result = malloc(size)) ) { /* assignment intentional */
+      return(result);
+    } else {
+      printf("memory overflow: malloc failed in SafeMalloc.");
+--- 44,50 ----
+  void * SafeMalloc(size_t size) {
+    void * result;
+  
+!   if ( (result = (*memleak_libc_malloc)(size)) ) { /* assignment intentional */
+      return(result);
+    } else {
+      printf("memory overflow: malloc failed in SafeMalloc.");
+***************
+*** 57,60 ****
+  /*  as a function to RBTreeCreate when no other suitable function has */
+  /*  been defined */
+  
+! void NullFunction(void * junk) { ; }
+--- 57,60 ----
+  /*  as a function to RBTreeCreate when no other suitable function has */
+  /*  been defined */
+  
+! void NullFunction(void* junk __attribute__ ((unused))) { ; }
+diff -rcN rb_tree.orig/misc.h rb_tree/misc.h
+*** rb_tree.orig/misc.h	2004-09-06 15:24:11.000000000 +0200
+--- rb_tree/misc.h	2010-09-14 00:30:17.000000000 +0200
+***************
+*** 20,28 ****
+  /*                names beginning with "g".  An example of a global */
+  /*                variable name is gNewtonsConstant. */
+  
+! void Assert(int assertion, char* error);
+  void * SafeMalloc(size_t size);
+  
+  #endif
+  
+  
+--- 20,31 ----
+  /*                names beginning with "g".  An example of a global */
+  /*                variable name is gNewtonsConstant. */
+  
+! void Assert(int assertion, char const* error);
+  void * SafeMalloc(size_t size);
+  
++ extern void* (*memleak_libc_malloc)(size_t size);
++ extern void (*memleak_libc_free)(void* ptr);
++ 
+  #endif
+  
+  
+diff -rcN rb_tree.orig/README rb_tree/README
+*** rb_tree.orig/README	1970-01-01 01:00:00.000000000 +0100
+--- rb_tree/README	2010-09-14 00:17:40.000000000 +0200
+***************
+*** 0 ****
+--- 1,3 ----
++ Original: http://web.mit.edu/~emin/www/source_code/red_black_tree/index.html
++ Applied diff: rb_tree.diff
++ 
+diff -rcN rb_tree.orig/red_black_tree.c rb_tree/red_black_tree.c
+*** rb_tree.orig/red_black_tree.c	2004-09-06 15:24:11.000000000 +0200
+--- rb_tree/red_black_tree.c	2010-09-14 00:12:04.000000000 +0200
+***************
+*** 24,30 ****
+  			      void (*DestFunc) (void*),
+  			      void (*InfoDestFunc) (void*),
+  			      void (*PrintFunc) (const void*),
+! 			      void (*PrintInfo)(void*)) {
+    rb_red_blk_tree* newTree;
+    rb_red_blk_node* temp;
+  
+--- 24,30 ----
+  			      void (*DestFunc) (void*),
+  			      void (*InfoDestFunc) (void*),
+  			      void (*PrintFunc) (const void*),
+! 			      void (*PrintInfo)(const void*)) {
+    rb_red_blk_tree* newTree;
+    rb_red_blk_node* temp;
+  
+***************
+*** 405,411 ****
+      TreeDestHelper(tree,x->right);
+      tree->DestroyKey(x->key);
+      tree->DestroyInfo(x->info);
+!     free(x);
+    }
+  }
+  
+--- 405,411 ----
+      TreeDestHelper(tree,x->right);
+      tree->DestroyKey(x->key);
+      tree->DestroyInfo(x->info);
+!     (*memleak_libc_free)(x);
+    }
+  }
+  
+***************
+*** 425,433 ****
+  
+  void RBTreeDestroy(rb_red_blk_tree* tree) {
+    TreeDestHelper(tree,tree->root->left);
+!   free(tree->root);
+!   free(tree->nil);
+!   free(tree);
+  }
+  
+  
+--- 425,433 ----
+  
+  void RBTreeDestroy(rb_red_blk_tree* tree) {
+    TreeDestHelper(tree,tree->root->left);
+!   (*memleak_libc_free)(tree->root);
+!   (*memleak_libc_free)(tree->nil);
+!   (*memleak_libc_free)(tree);
+  }
+  
+  
+***************
+*** 616,627 ****
+      } else {
+        z->parent->right=y;
+      }
+!     free(z); 
+    } else {
+      tree->DestroyKey(y->key);
+      tree->DestroyInfo(y->info);
+      if (!(y->red)) RBDeleteFixUp(tree,x);
+!     free(y);
+    }
+    
+  #ifdef DEBUG_ASSERT
+--- 616,627 ----
+      } else {
+        z->parent->right=y;
+      }
+!     (*memleak_libc_free)(z); 
+    } else {
+      tree->DestroyKey(y->key);
+      tree->DestroyInfo(y->info);
+      if (!(y->red)) RBDeleteFixUp(tree,x);
+!     (*memleak_libc_free)(y);
+    }
+    
+  #ifdef DEBUG_ASSERT
+diff -rcN rb_tree.orig/red_black_tree.h rb_tree/red_black_tree.h
+*** rb_tree.orig/red_black_tree.h	2004-09-06 15:24:11.000000000 +0200
+--- rb_tree/red_black_tree.h	2010-09-03 17:43:52.000000000 +0200
+***************
+*** 40,46 ****
+    void (*DestroyKey)(void* a);
+    void (*DestroyInfo)(void* a);
+    void (*PrintKey)(const void* a);
+!   void (*PrintInfo)(void* a);
+    /*  A sentinel is used for root and for nil.  These sentinels are */
+    /*  created when RBTreeCreate is caled.  root->left should always */
+    /*  point to the node which is the root of the tree.  nil points to a */
+--- 40,46 ----
+    void (*DestroyKey)(void* a);
+    void (*DestroyInfo)(void* a);
+    void (*PrintKey)(const void* a);
+!   void (*PrintInfo)(const void* a);
+    /*  A sentinel is used for root and for nil.  These sentinels are */
+    /*  created when RBTreeCreate is caled.  root->left should always */
+    /*  point to the node which is the root of the tree.  nil points to a */
+***************
+*** 55,61 ****
+  			     void (*DestFunc)(void*), 
+  			     void (*InfoDestFunc)(void*), 
+  			     void (*PrintFunc)(const void*),
+! 			     void (*PrintInfo)(void*));
+  rb_red_blk_node * RBTreeInsert(rb_red_blk_tree*, void* key, void* info);
+  void RBTreePrint(rb_red_blk_tree*);
+  void RBDelete(rb_red_blk_tree* , rb_red_blk_node* );
+--- 55,61 ----
+  			     void (*DestFunc)(void*), 
+  			     void (*InfoDestFunc)(void*), 
+  			     void (*PrintFunc)(const void*),
+! 			     void (*PrintInfo)(const void*));
+  rb_red_blk_node * RBTreeInsert(rb_red_blk_tree*, void* key, void* info);
+  void RBTreePrint(rb_red_blk_tree*);
+  void RBDelete(rb_red_blk_tree* , rb_red_blk_node* );
+diff -rcN rb_tree.orig/stack.c rb_tree/stack.c
+*** rb_tree.orig/stack.c	2004-09-06 15:24:11.000000000 +0200
+--- rb_tree/stack.c	2010-09-14 00:12:18.000000000 +0200
+***************
+*** 1,17 ****
+  #include "stack.h"
+  
+  int StackNotEmpty(stk_stack * theStack) {
+!   return( theStack ? (int) theStack->top : 0);
+  }
+  
+  stk_stack * StackJoin(stk_stack * stack1, stk_stack * stack2) {
+    if (!stack1->tail) {
+!     free(stack1);
+      return(stack2);
+    } else {
+      stack1->tail->next=stack2->top;
+      stack1->tail=stack2->tail;
+!     free(stack2);
+      return(stack1);
+    }
+  }
+--- 1,17 ----
+  #include "stack.h"
+  
+  int StackNotEmpty(stk_stack * theStack) {
+!   return (theStack && theStack->top) ? 1 : 0;
+  }
+  
+  stk_stack * StackJoin(stk_stack * stack1, stk_stack * stack2) {
+    if (!stack1->tail) {
+!     (*memleak_libc_free)(stack1);
+      return(stack2);
+    } else {
+      stack1->tail->next=stack2->top;
+      stack1->tail=stack2->tail;
+!     (*memleak_libc_free)(stack2);
+      return(stack1);
+    }
+  }
+***************
+*** 51,57 ****
+      popInfo=theStack->top->info;
+      oldNode=theStack->top;
+      theStack->top=theStack->top->next;
+!     free(oldNode);
+      if (!theStack->top) theStack->tail=NULL;
+    } else {
+      popInfo=NULL;
+--- 51,57 ----
+      popInfo=theStack->top->info;
+      oldNode=theStack->top;
+      theStack->top=theStack->top->next;
+!     (*memleak_libc_free)(oldNode);
+      if (!theStack->top) theStack->tail=NULL;
+    } else {
+      popInfo=NULL;
+***************
+*** 67,76 ****
+      while(x) {
+        y=x->next;
+        DestFunc(x->info);
+!       free(x);
+        x=y;
+      }
+!     free(theStack);
+    }
+  } 
+      
+--- 67,76 ----
+      while(x) {
+        y=x->next;
+        DestFunc(x->info);
+!       (*memleak_libc_free)(x);
+        x=y;
+      }
+!     (*memleak_libc_free)(theStack);
+    }
+  } 
+      
+diff -rcN rb_tree.orig/test_red_black_tree.c rb_tree/test_red_black_tree.c
+*** rb_tree.orig/test_red_black_tree.c	2005-01-09 22:18:51.000000000 +0100
+--- rb_tree/test_red_black_tree.c	2010-09-03 14:36:54.000000000 +0200
+***************
+*** 71,77 ****
+  	  printf("type key of node to query for\n");
+  	  scanf("%i",&newKey);
+  	  if ( ( newNode = RBExactQuery(tree,&newKey) ) ) {/*assignment*/
+! 	    printf("data found in tree at location %i\n",(int)newNode);
+  	  } else {
+  	    printf("data not in tree\n");
+  	  }
+--- 71,77 ----
+  	  printf("type key of node to query for\n");
+  	  scanf("%i",&newKey);
+  	  if ( ( newNode = RBExactQuery(tree,&newKey) ) ) {/*assignment*/
+! 	    printf("data found in tree at location %p\n", (void*)newNode);
+  	  } else {
+  	    printf("data not in tree\n");
+  	  }
