@@ -9,6 +9,7 @@ EXTRA_DIST = ${BUILT_SOURCES}
 lib_LIBRARIES = librbtree.a
 BUILT_SOURCES =
 DEFS = @DEFS@
+ARFLAGS = @AR_FLAGS@
 CFLAGS = -fPIC @CFLAGS@
 
 librbtree_a_SOURCES = \

@@ -34,7 +34,8 @@ struct Interval;
 //! @brief Allocation header.
 //
 // Each memory allocation is increased in size and has this data prepended.
-struct Header {
+__attribute__((__packed__)) struct Header
+{
   struct Header* prev;                          //!< Previous allocation with the same backtrace.
   struct Header* next;                          //!< Next allocation with the same backtrace.
   intptr_t size;                                //!< Size of the allocation (minus Header).
@@ -43,7 +44,7 @@ struct Header {
   struct BacktraceEntry* backtrace;             //!< Pointer to the backtrace that this allocation belongs to.
   struct Interval* interval;                    //!< Pointer to interval this allocation was made in, if any.
   void* magic_number;                           //!< Magic Number.
-} __attribute__((__packed__));
+};
 
 //! @brief Abbreviation for struct Header.
 typedef struct Header Header;

@@ -57,9 +57,27 @@ static void init(void);
 #undef DEBUG_EXPENSIVE
 #undef DEBUG_PRINT
 
+static void my_write(int fd, char const* ptr, size_t len)
+{
+  while (len > 0)
+  {
+    int ret = write(fd, ptr, len);
+    if (ret < 0)
+    {
+      int err = errno;
+      if (err == EAGAIN || err == EINTR)
+        continue;
+      // Fatal error.
+      break;
+    }
+    len -= ret;
+    ptr += ret;
+  }
+}
+
 static void print(char const* ptr)
 {
-  write(1, ptr, strlen(ptr));
+  my_write(1, ptr, strlen(ptr));
 }
 
 #ifdef DEBUG_PRINT
@@ -81,7 +99,7 @@ static void print_size(size_t size)
 
 static void print_ptr(void* ptrin)
 {
-  write(1, "0x", 2);
+  my_write(1, "0x", 2);
   intptr_t size = (intptr_t)ptrin;
   char buf[32];
   char* ptr = &buf[31];
@@ -103,12 +121,12 @@ static void print_lock(void)
 {
   pthread_mutex_lock(&print_mutex);
   print_ptr((void*)pthread_self());
-  write(1, ": ", 2);
+  my_write(1, ": ", 2);
 }
 
 static void print_unlock(void)
 {
-  write(1, "\n", 1);
+  my_write(1, "\n", 1);
   pthread_mutex_unlock(&print_mutex);
 }
 
@@ -1360,7 +1378,7 @@ static void* monitor(void* dummy __attribute__((unused)))
 	}
 	printf("libmemleak: Accepted a connection on \"%s\".\n", sockname);
 	if (fd > 0)
-	  write(fd, "PROMPT\n", 7);
+	  my_write(fd, "PROMPT\n", 7);
       }
       if (FD_ISSET(fd, &rfds))
       {
@@ -1408,7 +1426,7 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      "dump N   : Print backtrace number N.\n"
 	    };
 	    for (size_t line = 0; line < sizeof(helptext) / sizeof(char*); ++line)
-	      write(fd, helptext[line], strlen(helptext[line]));
+	      my_write(fd, helptext[line], strlen(helptext[line]));
 	  }
 	  else if ((!stats.recording && strcmp(buf, "start") == 0) ||
 	           ( stats.recording && strcmp(buf, "restart") == 0))
@@ -1421,15 +1439,15 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      buf[79] = '\n';
 	      len = 80;
 	    }
-	    write(fd, buf, len);
+	    my_write(fd, buf, len);
 	    if (fd > 0)
-	      write(fd, "PROMPT\n", 7);
+	      my_write(fd, "PROMPT\n", 7);
 	    break;
 	  }
 	  else if (stats.recording && strcmp(buf, "stop") == 0)
 	  {
 	    interval_stop_recording();
-	    write(fd, "Stopped.\n", 9);
+	    my_write(fd, "Stopped.\n", 9);
 	  }
 	  else if (strcmp(buf, "delete") == 0)
 	  {
@@ -1439,13 +1457,13 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      buf[79] = '\n';
 	      len = 80;
 	    }
-	    write(fd, buf, len);
+	    my_write(fd, buf, len);
 	    interval_delete(stats.oldest_interval_end);
 	  }
 	  else if (strcmp(buf, "stats") == 0)
 	  {
 	    if (fd > 0)
-	      write(fd, "PROMPT\n", 7);
+	      my_write(fd, "PROMPT\n", 7);
 	    break;
 	  }
 	  else if (strncmp(buf, "stats ", 6) == 0)
@@ -1466,7 +1484,7 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      buf[79] = '\n';
 	      len = 80;
 	    }
-	    write(fd, buf, len);
+	    my_write(fd, buf, len);
 	  }
 	  else if (strncmp(buf, "restart ", 8) == 0)
 	  {
@@ -1486,7 +1504,7 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      buf[79] = '\n';
 	      len = 80;
 	    }
-	    write(fd, buf, len);
+	    my_write(fd, buf, len);
 	  }
 	  else if (strncmp(buf, "list ", 5) == 0)
 	  {
@@ -1509,7 +1527,7 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      buf[79] = '\n';
 	      len = 80;
 	    }
-	    write(fd, buf, len);
+	    my_write(fd, buf, len);
 	  }
 	  else if (strncmp(buf, "dump ", 5) == 0)
 	  {
@@ -1535,14 +1553,14 @@ static void* monitor(void* dummy __attribute__((unused)))
 		buf[79] = '\n';
 		len = 80;
 	      }
-	      write(fd, buf, len);
+	      my_write(fd, buf, len);
 	    }
 	  }
 	  else
-	    write(fd, "Ignored.\n", 9);
+	    my_write(fd, "Ignored.\n", 9);
 	}
 	if (fd > 0)
-	  write(fd, "PROMPT\n", 7);
+	  my_write(fd, "PROMPT\n", 7);
       }
     }
     ++count;
@@ -1564,7 +1582,7 @@ static void terminate(void)
   }
   if (fd > 0)
   {
-    write(fd, "QUIT\n", 5);
+    my_write(fd, "QUIT\n", 5);
     close(fd);
     fd = 0;
   }

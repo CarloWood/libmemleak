@@ -71,6 +71,9 @@ dnl Each Makefile.am should use DEFS = @DEFS@. Set DEFS here.
 DEFS="-DHAVE_CONFIG_H"
 AC_SUBST(DEFS)
 
+dnl Suppress warning from ar by supplying U flag.
+AC_SUBST(AR_FLAGS, [cruU])
+
 dnl These CFLAGS are used in the .pc file.
 PCCFLAGS=
 AC_SUBST(PCCFLAGS)
