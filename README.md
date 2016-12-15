@@ -13,7 +13,6 @@ After starting the application, connect to it by running `memleak_control`,
 provided in the package. Type 'help' on its command prompt.
 
 <pre>
-```
 $ memleak_control
 libmemleak> help
 help     : Print this help.
@@ -29,7 +28,48 @@ dump N   : Print backtrace number N.
 libmemleak> start
 Auto restart interval is 6 * 10 seconds.
 </pre>
-```
+
+When using this on the executable `./hello` provided in the package,
+the output, after a couple of minutes, will look something like this:
+
+<pre>
+hello: Now: 287;        Backtraces: 77;         allocations: 650036;    total memory: 83,709,180 bytes.
+backtrace 50 (value_n: 104636.00); [ 178, 238>(  60): 25957 allocations (1375222 total,  1.9%), size 3311982; 432.62 allocations/s, 55199 bytes/s
+backtrace 50 (value_n: 104636.00); [  55, 178>( 123): 52722 allocations (2793918 total,  1.9%), size 6734135; 428.63 allocations/s, 54749 bytes/s
+backtrace 49 (value_n: 58296.00); [ 178, 238>(  60): 14520 allocations (1382814 total,  1.1%), size 1860716; 242.00 allocations/s, 31011 bytes/s
+backtrace 49 (value_n: 58296.00); [  55, 178>( 123): 29256 allocations (2794155 total,  1.0%), size 3744938; 237.85 allocations/s, 30446 bytes/s
+</pre>
+
+Showing two intervals here: from 55 seconds after start till 178 seconds after start,
+and a second interval between 178 and 238 seconds. The size of each interval is
+shown between brackets for convenience (123 and 60 seconds respectively).
+
+The number of not-freed allocations is printed next with the total number
+of allocations done in that interval and the percentage of non-freed
+allocations between brackets. Finally the total amount of leaked memory
+in bytes, and the number of leaks in allocations and bytes per second
+is given.
+
+As you can see in this example, backtrace 50 leaks about twice as much as backtrace 49.
+In fact, backtrace 49 doesn't really leak at all (it just naturally causes the heap
+to grow in the beginning), but backtrace does (deliberately) have a bug that causes
+leaking up top of that. We can print both backtraces from `memleak_control` with
+the command:
+
+<pre>
+libmemleak> dump 49
+ #0  00007f84b862d33b  in malloc at /home/carlo/projects/libmemleak/libmemleak-objdir/src/../../libmemleak/src/memleak.c:1008
+ #1  00000000004014da  in do_work(int)
+ #2  000000000040101c  in thread_entry0(void*)
+ #3  00007f84b7e7070a  in start_thread
+ #4  00007f84b7b9f82d  in ?? at /build/glibc-Qz8a69/glibc-2.23/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:111
+libmemleak> dump 50
+ #0  00007f84b862d33b  in malloc at /home/carlo/projects/libmemleak/libmemleak-objdir/src/../../libmemleak/src/memleak.c:1008
+ #1  00000000004014da  in do_work(int)
+ #2  0000000000401035  in thread_entry1(void*)
+ #3  00007f84b7e7070a  in start_thread
+ #4  00007f84b7b9f82d  in ?? at /build/glibc-Qz8a69/glibc-2.23/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:111
+</pre>
 
 ## The memleak_control executable
 
