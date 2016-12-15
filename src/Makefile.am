@@ -8,7 +8,7 @@ EXTRA_DIST = pch-source.h ${BUILT_SOURCES}
 
 lib_LTLIBRARIES = libmemleak.la
 VERSIONINFO = @VERSIONINFO@
-INCLUDES = -I$(top_builddir)/include -I$(srcdir)/include
+AM_CPPFLAGS = -I$(top_builddir)/include -I$(srcdir)/include
 BUILT_SOURCES =
 DEFS = @DEFS@
 CFLAGS = -g
