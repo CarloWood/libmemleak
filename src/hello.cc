@@ -127,7 +127,7 @@ void do_work(bool leak)
 
   initstate_r(0x1234aabc, rstatebuf, sizeof(rstatebuf), &rdata);
 
-  for (int i = 0; i < 10000000; ++i)
+  for (int i = 0; i < 1000000000; ++i)
   {
     random_r(&rdata, &rvalue);
     rvalue >>= 8;

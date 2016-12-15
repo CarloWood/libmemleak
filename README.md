@@ -3,12 +3,33 @@
 This library was written to detect memory leaks in any application
 by preloading it (you might also need to preload libbfd and libdl).
 
-Usage (example):
+## Usage example
 
-`LD_PRELOAD='/usr/local/lib/libmemleak.so /usr/lib/x86_64-linux-gnu/libdl.so /usr/lib/x86_64-linux-gnu/libbfd.so' ./a.out`
+`LD_PRELOAD='/usr/local/lib/libmemleak.so' ./a.out`
+
+Possibly you'll need to preload libbfd and libdl too, so use `LD_PRELOAD='/usr/local/lib/libmemleak.so /usr/lib/x86_64-linux-gnu/libdl.so /usr/lib/x86_64-linux-gnu/libbfd.so'`.
 
 After starting the application, connect to it by running `memleak_control`,
 provided in the package. Type 'help' on its command prompt.
+
+<pre>
+```
+$ memleak_control
+libmemleak> help
+help     : Print this help.
+start    : Erase all intervals and start recording the first interval.
+stop     : Stop recording.
+restart  : Start a new interval. Keep, and possibly combine, previous intervals.
+delete   : Delete the oldest interval.
+stats    : Print overview of backtrace with highest leak probability.
+stats N  : Automatically print stats every N seconds (use 0 to turn off).
+restart M: Automatically restart every N * M stats.
+list N   : When printing stats, print only the first N backtraces.
+dump N   : Print backtrace number N.
+libmemleak> start
+Auto restart interval is 6 * 10 seconds.
+</pre>
+```
 
 ## The memleak_control executable
 
