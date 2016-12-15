@@ -1418,7 +1418,10 @@ static void* monitor(void* dummy __attribute__((unused)))
 	    count = -1;
 	    int len = snprintf(buf, sizeof(buf), "Auto restart interval is %d * %lu seconds.\n", restart_multiplier, sleeptime.tv_sec);
 	    if (len > 80)
+	    {
+	      buf[79] = '\n';
 	      len = 80;
+	    }
 	    write(fd, buf, len);
 	    if (fd > 0)
 	      write(fd, "PROMPT\n", 7);
@@ -1433,7 +1436,10 @@ static void* monitor(void* dummy __attribute__((unused)))
 	  {
             int len = snprintf(buf, sizeof(buf), "Deleting all intervals that end before %lu seconds since application start.\n", stats.oldest_interval_end);
 	    if (len > 80)
+	    {
+	      buf[79] = '\n';
 	      len = 80;
+	    }
 	    write(fd, buf, len);
 	    interval_delete(stats.oldest_interval_end);
 	  }
@@ -1457,7 +1463,10 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      len = snprintf(buf, sizeof(buf), "Interval between printing of stats must be at least 1 second.\n");
 	    }
 	    if (len > 80)
+	    {
+	      buf[79] = '\n';
 	      len = 80;
+	    }
 	    write(fd, buf, len);
 	  }
 	  else if (strncmp(buf, "restart ", 8) == 0)
@@ -1474,7 +1483,10 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      len = snprintf(buf, sizeof(buf), "Restart multiplier must be at least 2.\n");
 	    }
 	    if (len > 80)
+	    {
+	      buf[79] = '\n';
 	      len = 80;
+	    }
 	    write(fd, buf, len);
 	  }
 	  else if (strncmp(buf, "list ", 5) == 0)
@@ -1494,7 +1506,10 @@ static void* monitor(void* dummy __attribute__((unused)))
 	      len = snprintf(buf, sizeof(buf), "Argument of list must be at least 1.\n");
 	    }
 	    if (len > 80)
+	    {
+	      buf[79] = '\n';
 	      len = 80;
+	    }
 	    write(fd, buf, len);
 	  }
 	  else if (strncmp(buf, "dump ", 5) == 0)
@@ -1517,7 +1532,10 @@ static void* monitor(void* dummy __attribute__((unused)))
 	    {
 	      int len = snprintf(buf, sizeof(buf), "Backtrace %d doesn't exist.\n", arg);
 	      if (len > 80)
+	      {
+		buf[79] = '\n';
 		len = 80;
+	      }
 	      write(fd, buf, len);
 	    }
 	  }
