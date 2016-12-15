@@ -523,7 +523,7 @@ static BacktraceEntry* update_entry_add(void** backtrace, int backtrace_size)
     if (++depth_cnt > depth)
     {
       depth = depth_cnt;
-      printf("Max hash depth %d\n", depth);
+      Debug(print_lock(); print("Max hash depth "); print_size(depth); print_unlock());
     }
     if (UNLIKELY(!(bp = *bpp)))
     {
