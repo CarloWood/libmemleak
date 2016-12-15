@@ -2,10 +2,11 @@
 //
 //! @file BacktraceEntry.h This file contains the declaration of struct BacktraceEntry.
 //
-// Copyright (C) 2010, by
+// Copyright (C) 2010 - 2016, by
 // 
-// Aleric Inglewood <aleric.inglewood@gmail.com>
-// Aleric on freenode.
+// Carlo Wood, Run on IRC <carlo@alinoe.com>
+// RSA-1024 0x624ACAD5 1997-01-26                    Sign & Encrypt
+// Fingerprint16 = 32 EC A7 B6 AC DB 65 A6  F6 F6 55 DD 1C DC FF 61
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

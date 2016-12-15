@@ -2,10 +2,11 @@
 //
 //! @file memleak.c Keep track of all allocations, sorted by backtrace.
 //
-// Copyright (C) 2010, by
+// Copyright (C) 2010 - 2016, by
 // 
-// Aleric Inglewood <aleric.inglewood@gmail.com>
-// Aleric on freenode.
+// Carlo Wood, Run on IRC <carlo@alinoe.com>
+// RSA-1024 0x624ACAD5 1997-01-26                    Sign & Encrypt
+// Fingerprint16 = 32 EC A7 B6 AC DB 65 A6  F6 F6 55 DD 1C DC FF 61
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +21,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef USE_PCH
 #define _GNU_SOURCE
 #include <sys/types.h>
 #include <stdlib.h>
@@ -39,7 +39,6 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <errno.h>
-#endif
 
 #include "addr2line.h"
 #include "sort.h"

@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<meta name="Author" content="Aleric Inglewood">
+<meta name="Author" content="Carlo Wood">
 <meta name="description" content="@PACKAGE_NAME@ version @VERSION@">
 <title>@PACKAGE_NAME@ documentation</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">

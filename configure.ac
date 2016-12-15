@@ -19,7 +19,7 @@ define(CW_INTERFACE_VERSION_REVISION, 0)
 define(CW_INTERFACE_AGE, 0)
 
 define(CW_PACKAGE_NAME, [libmemleak])
-define(CW_BUGREPORT, [aleric.inglewood@gmail.com])
+define(CW_BUGREPORT, [carlo@alinoe.com])
 
 dnl Package name and version
 AC_INIT(CW_PACKAGE_NAME, CW_VERSION_MAJOR.CW_VERSION_MINOR.CW_VERSION_REVISION, CW_BUGREPORT)
@@ -66,10 +66,6 @@ AC_PROG_CXXCPP
 dnl Add --enable-debug (DEBUG, DOXYGEN_DEBUG), --enable-optimise and --enable-profile options.
 dnl Update CFLAGS accordingly.
 CW_OPG_CFLAGS([-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline])
-
-dnl Add --enable-pch (USE_PCH (macro)) option.
-dnl Update USE_PCH (automake conditional) and PCHFLAGS accordingly.
-CW_PCHFLAGS
 
 dnl Each Makefile.am should use DEFS = @DEFS@. Set DEFS here.
 DEFS="-DHAVE_CONFIG_H"

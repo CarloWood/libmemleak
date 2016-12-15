@@ -3,7 +3,7 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = @ACLOCAL_CWFLAGS@
 
-SUBDIRS = src . doc
+SUBDIRS = src doc
 
 EXTRA_DIST = LICENSE.GPL3 INSTALL README NEWS
 DISTCLEANFILES = stamp-h.in
@@ -22,4 +22,4 @@ distclean-local:
 
 MAINTAINERCLEANFILES = $(srcdir)/aclocal.m4 $(srcdir)/config.h.in $(srcdir)/configure $(srcdir)/Makefile.in \
 	$(srcdir)/install-sh $(srcdir)/missing $(srcdir)/mkinstalldirs $(srcdir)/config.guess $(srcdir)/config.sub \
-	$(srcdir)/ltmain.sh $(srcdir)/stamp-h.in $(srcdir)/ChangeLog $(srcdir)/depcomp troep*
+	$(srcdir)/ltmain.sh $(srcdir)/stamp-h.in $(srcdir)/ChangeLog $(srcdir)/compile $(srcdir)/depcomp troep*
