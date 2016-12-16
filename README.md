@@ -85,13 +85,22 @@ where `N` is the number of backtraces to print each stats.
 
 Backtraces are reported with an integer number (N). To dump the actual stacktrace use
 the command `dump N`. Backtraces are also written to a file `memleak_backtraces` in
-the current directory.
+the current directory every time a `stats` command is executed, so all backtraces
+are available at all times, even if the program crashes or halts.
 
 Printing stats can be automated, as if the command `stats` is given every N seconds, with
 the command `stats N`.
 
 Restarting an interval can be automated, as if the command `restart` is given even N * M seconds,
-with the command `restart M`.
+with the command `restart M`. Note that when a restart is perform, a new interval is started
+but the old intervals are kept. Older intervals however are combined (made into a larger interval),
+growing exponentially in size the older they are. In virtually all cases however, if you
+run an application with libmemleak and started recording, then all that is needed is to
+do whatever causes the leak for a while, with an `N * M` (see below) a bit smaller than
+the period over which the leak should be detectable (ie, no pre- and/or initialization
+allocations that might "confuse" libmemleak) and the memory leak backtrace will be
+the one it reports at the top. Hence, you can just sit back and watch until you see
+the leak pop-up on the top.
 
 ## Environment variables
 
