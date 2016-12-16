@@ -5,7 +5,7 @@ dnl CW_VERSION_MINOR               : Increment when major changes have occured, 
 dnl CW_VERSION_REVISION            : Increment every public release; or set to 0 when CW_VERSION_MINOR was incremented.
 
 define(CW_VERSION_MAJOR, 0)
-define(CW_VERSION_MINOR, 0)
+define(CW_VERSION_MINOR, 1)
 define(CW_VERSION_REVISION, 0)
 
 dnl Version info, see http://www.gnu.org/software/libtool/manual.html#Updating-version-info
@@ -15,7 +15,7 @@ dnl CW_INTERFACE_VERSION_REVISION  : Revision, increment every public release; o
 dnl CW_INTERFACE_AGE               : Increment if interfaces have been added; or set to 0 when interfaces have been removed.
 
 define(CW_INTERFACE_VERSION, 0)
-define(CW_INTERFACE_VERSION_REVISION, 0)
+define(CW_INTERFACE_VERSION_REVISION, 1)
 define(CW_INTERFACE_AGE, 0)
 
 define(CW_PACKAGE_NAME, [libmemleak])
@@ -44,7 +44,7 @@ dnl Check if we are the real maintainer
 AM_CONDITIONAL(REAL_MAINTAINER, test -z "$MAINTAINER_MODE_TRUE" -a -n "$TOPPROJECT")
 
 dnl Because we use cwautomacros.
-CW_AUTOMACROS([20091119])
+CW_AUTOMACROS([20160921])
 
 dnl We use doxygen for documentation.
 CW_DOXYGEN
