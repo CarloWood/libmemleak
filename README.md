@@ -93,15 +93,22 @@ Printing stats can be automated, as if the command `stats` is given every N seco
 the command `stats N`.
 
 Restarting an interval can be automated, as if the command `restart` is given even N * M seconds,
-with the command `restart M`. Note that when a restart is perform, a new interval is started
+with the command `restart M`. Note that when a restart is performed, a new interval is started
 but the old intervals are kept. Older intervals however are combined (made into a larger interval),
-growing exponentially in size the older they are. In virtually all cases however, if you
+growing exponentially in size the older they are. In virtually all cases, when you
 run an application with libmemleak and started recording, then all that is needed is to
-do whatever causes the leak for a while, with an `N * M` (see below) a bit smaller than
-the period over which the leak should be detectable (ie, no pre- and/or initialization
-allocations that might "confuse" libmemleak) and the memory leak backtrace will be
-the one it reports at the top. Hence, you can just sit back and watch until you see
-the leak pop-up on the top.
+do whatever causes the leak for a while, with an `N * M` seconds (see below) being a bit smaller
+than the period over which the leak should be detectable (that is, not too large so that
+pre- and/or initialization allocations might "confuse" libmemleak, and also not too short
+so that the amount leaked disappears in the noise of normal allocations), and the memory leak
+backtrace will be the one that is reported at the top.
+
+Since libmemleak pushes older intervals to the bottom (you can delete them with the
+command `delete`) and combines interval to make larger and larger ones, neither
+cause should ever be a problem really; at some point in time the leak should be
+clearly detected in a slowly increasing number of printed intervals.
+
+Hence, you can just sit back and watch until you see the leak pop-up on the top.
 
 ## Environment variables
 
