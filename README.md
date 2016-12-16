@@ -55,7 +55,7 @@ In fact, backtrace 49 doesn't really leak at all (it just naturally causes the h
 to grow in the beginning), but backtrace 50 does (deliberately) have a bug that causes
 leaking on top of that.
 
-We can print both backtraces from `memleak_control` with the command:
+We can print both backtraces from `memleak_control` with the commands,
 
 <pre>
 libmemleak> dump 49
