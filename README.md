@@ -1,7 +1,6 @@
 # A preloaded memory leak detection library
 
-This library was written to detect memory leaks in any application
-by preloading it (you might also need to preload libbfd and libdl).
+This library was written to detect memory leaks in any application by preloading it.
 
 ## Usage example
 
