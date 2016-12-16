@@ -52,9 +52,10 @@ is given.
 
 As you can see in this example, backtrace 50 leaks about twice as much as backtrace 49.
 In fact, backtrace 49 doesn't really leak at all (it just naturally causes the heap
-to grow in the beginning), but backtrace does (deliberately) have a bug that causes
-leaking up top of that. We can print both backtraces from `memleak_control` with
-the command:
+to grow in the beginning), but backtrace 50 does (deliberately) have a bug that causes
+leaking on top of that.
+
+We can print both backtraces from `memleak_control` with the command:
 
 <pre>
 libmemleak> dump 49
