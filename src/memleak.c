@@ -52,11 +52,6 @@ static void init(void);
 
 #undef assert
 
-#ifdef DEBUG
-
-#undef DEBUG_EXPENSIVE
-#undef DEBUG_PRINT
-
 static void my_write(int fd, char const* ptr, size_t len)
 {
   while (len > 0)
@@ -74,6 +69,11 @@ static void my_write(int fd, char const* ptr, size_t len)
     ptr += ret;
   }
 }
+
+#ifdef DEBUG
+
+#undef DEBUG_EXPENSIVE
+#undef DEBUG_PRINT
 
 static void print(char const* ptr)
 {
