@@ -111,6 +111,9 @@ of printed intervals.
 
 Hence, you can just sit back and watch until you see the leak pop-up on the top.
 
+In the case of the `hello` test program, the leak is detected immediately.
+Using `stats 1` and `restart 2` will show the correct backtrace after 2 seconds.
+
 ## Environment variables
 
 The following environment variables can be set to configure
