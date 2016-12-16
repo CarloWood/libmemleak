@@ -104,9 +104,10 @@ so that the amount leaked disappears in the noise of normal allocations), and th
 backtrace will be the one that is reported at the top.
 
 Since libmemleak pushes older intervals to the bottom (you can delete them with the
-command `delete`) and combines interval to make larger and larger ones, neither
-cause should ever be a problem really; at some point in time the leak should be
-clearly detected in a slowly increasing number of printed intervals.
+command `delete`) and combines intervals to make larger and larger ones, intervals
+being too short or too long should never be a problem really when the leak is continuous:
+at some point in time the leak should become clearly visible in a slowly increasing number
+of printed intervals.
 
 Hence, you can just sit back and watch until you see the leak pop-up on the top.
 
