@@ -28,7 +28,7 @@ libmemleak> start
 Auto restart interval is 6 * 10 seconds.
 </pre>
 
-When using this on the `hello` test program ` provided in the package,
+When using this on the `hello` test program provided in the package,
 the output, after a couple of minutes, will look something like this:
 
 <pre>
