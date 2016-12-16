@@ -27,7 +27,8 @@ hello_CXXFLAGS = -pthread @CXXFLAGS@
 libmemleak_la_SOURCES = \
 	memleak.c \
 	addr2line.c \
-	sort.c
+	sort.c \
+	sort.hc
 
 libmemleak_la_CFLAGS = -std=c99 @CFLAGS@
 libmemleak_la_LIBADD = @LIBBFD@

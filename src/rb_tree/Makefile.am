@@ -4,7 +4,7 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = .
 
-EXTRA_DIST = ${BUILT_SOURCES}
+EXTRA_DIST = CHANGES LICENSE rb_tree.diff README simple_test.sh unfreed.txt ${BUILT_SOURCES}
 
 lib_LIBRARIES = librbtree.a
 BUILT_SOURCES =
@@ -14,8 +14,11 @@ CFLAGS = -fPIC @CFLAGS@
 
 librbtree_a_SOURCES = \
 	red_black_tree.c \
+	red_black_tree.h \
 	stack.c \
-	misc.c
+	stack.h \
+	misc.c \
+	misc.h
 
 librbtree_a_CFLAGS =
 

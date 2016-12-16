@@ -1,6 +1,6 @@
 SUBDIRS = .
 
-EXTRA_DIST =
+EXTRA_DIST = main.css mainpage.dox images/silvrhed.png
 BUILT_SOURCES =
 
 if REAL_MAINTAINER
