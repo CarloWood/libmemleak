@@ -148,9 +148,9 @@ static void print_unlock(void)
 //---------------------------------------------------------------------------------------------
 // Function pointers to the real (or bootstrap) functions.
 
-void* (*memleak_libc_malloc)(size_t size) = &malloc_bootstrap1;
-static void* (*libc_calloc)(size_t nmemb, size_t size) = &calloc_bootstrap1;
-static void* (*libc_realloc)(void* ptr, size_t size);
+void* (*volatile memleak_libc_malloc)(size_t size) = &malloc_bootstrap1;
+static void* (* volatile memleak_libc_calloc)(size_t nmemb, size_t size) = &calloc_bootstrap1;
+static void* (*memleak_libc_realloc)(void* ptr, size_t size);
 void (*memleak_libc_free)(void* ptr);
 static void (*libc_free_final)(void* ptr) = (void (*)(void*))0;
 static int (*libc_posix_memalign)(void** memptr, size_t alignment, size_t size) = (int (*)(void**, size_t, size_t))0;
@@ -223,9 +223,13 @@ static void init_malloc_function_pointers(void)
 {
   // Point functions to next phase.
   memleak_libc_malloc = malloc_bootstrap2;
-  libc_calloc = calloc_bootstrap2;
-  libc_realloc = realloc_bootstrap2;
+  memleak_libc_calloc = calloc_bootstrap2;
+  memleak_libc_realloc = realloc_bootstrap2;
   memleak_libc_free = free_bootstrap2;
+
+  // Make sure the above doesn't get reordered below the next lines.
+  asm volatile ("" : : : "memory");
+
   void* (*libc_malloc_tmp)(size_t size);
   void* (*libc_calloc_tmp)(size_t nmemb, size_t size);
   void* (*libc_realloc_tmp)(void* ptr, size_t size);
@@ -239,8 +243,8 @@ static void init_malloc_function_pointers(void)
   libc_free_tmp = (void (*)(void*))dlsym(RTLD_NEXT, "free");
   assert(libc_free_tmp);
   memleak_libc_malloc = libc_malloc_tmp;
-  libc_calloc = libc_calloc_tmp;
-  libc_realloc = libc_realloc_tmp;
+  memleak_libc_calloc = libc_calloc_tmp;
+  memleak_libc_realloc = libc_realloc_tmp;
   libc_posix_memalign = (int (*)(void**, size_t, size_t))dlsym(RTLD_NEXT, "posix_memalign");
   assert(libc_posix_memalign);
   if (allocation_counter == 0)  // Done?
@@ -264,7 +268,7 @@ static void* malloc_bootstrap1(size_t size)
 static void* calloc_bootstrap1(size_t nmemb, size_t size)
 {
   init_malloc_function_pointers();
-  return (*libc_calloc)(nmemb, size);
+  return (*memleak_libc_calloc)(nmemb, size);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -527,7 +531,7 @@ static BacktraceEntry* update_entry_add(void** backtrace, int backtrace_size)
     }
     if (UNLIKELY(!(bp = *bpp)))
     {
-      bp = *bpp = (*libc_calloc)(sizeof(BacktraceEntry), 1);
+      bp = *bpp = (*memleak_libc_calloc)(sizeof(BacktraceEntry), 1);
       memcpy(bp->ptr, backtrace, backtrace_size * sizeof(void*));
       bp->backtrace_size = backtrace_size;
       bp->next = stats.first_entry;
@@ -558,7 +562,7 @@ static void update_interval_add(Header* header)
     else
 #endif
     {
-      interval = bp->recording_interval = (*libc_calloc)(1, sizeof(Interval));
+      interval = bp->recording_interval = (*memleak_libc_calloc)(1, sizeof(Interval));
       interval_link(bp, interval);
     }
     interval->start = interval_start;
@@ -1018,7 +1022,7 @@ void* calloc(size_t nmemb, size_t size)
   if (!nmemb || !size)
     return NULL;
   size_t alloc_nmemb = nmemb + (HEADER_OFFSET + size - 1) / size;
-  void* allocation = (*libc_calloc)(alloc_nmemb, size);
+  void* allocation = (*memleak_libc_calloc)(alloc_nmemb, size);
   if (!allocation)
     return NULL;
 #ifdef DEBUG_EXPENSIVE
@@ -1052,7 +1056,7 @@ void* realloc(void* void_ptr, size_t size)
 #ifdef DEBUG_EXPENSIVE
   memset(void_ptr, 0xf9, sizeof(Header));
 #endif
-  void* allocation = (*libc_realloc)(void_ptr, size + HEADER_OFFSET);
+  void* allocation = (*memleak_libc_realloc)(void_ptr, size + HEADER_OFFSET);
 #ifdef DEBUG_EXPENSIVE
   assert(allocation);
   memset(allocation, 0xa7, sizeof(Header));
