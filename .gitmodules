@@ -1,0 +1,3 @@
+[submodule "cwm4"]
+	path = cwm4
+	url = https://github.com/CarloWood/cwm4.git
