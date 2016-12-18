@@ -1,8 +1,8 @@
 #! /bin/sh
 
 # Clueless user check.
-if test ! -d CVS -a ! -d .svn -a -f configure; then
-  echo "You only need to run './autogen.sh' when you checked out this project using SVN."
+if test ! -d .git -a -f configure; then
+  echo "You only need to run './autogen.sh' when you checked out this project using git."
   echo "Just run ./configure [--help]."
   echo "If you insist on running it, then first remove the 'configure' script."
   exit 0
@@ -13,7 +13,7 @@ PREFIX=${CWAUTOMACROSPREFIX-/usr}
 
 if test ! -f $PREFIX/share/cwautomacros/scripts/autogen.sh; then
   echo "$0: $PREFIX/share/cwautomacros/scripts/autogen.sh: No such file or directory"
-  echo "$0: This project needs 'cwautomacros'. See http://cwautomacros.berlios.de/"
+  echo "$0: This project needs 'cwautomacros'. See https://github.com/CarloWood/cwautomacros"
   exit 126
 fi
 
