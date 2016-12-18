@@ -38,7 +38,7 @@ all-local:
 
 distclean-local:
 	rm -rf $(srcdir)/autom4te.cache
-	@test -L .gdbinit && rm .gdbinit
+	@if test -L .gdbinit; then rm .gdbinit; fi
 	@MAINTAINER_MODE_TRUE@rm -f .all_sources *.s *.i *.ii
 
 DISTCLEANFILES = memleak_backtraces memleak_sock
