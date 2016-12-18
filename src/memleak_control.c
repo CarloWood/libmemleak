@@ -31,7 +31,9 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-void error(char*);
+#define UNUSED(...) (void)(__VA_ARGS__)
+
+void error(char const*);
 
 // A static variable for holding the line.
 static char* line_read = NULL;
@@ -56,9 +58,11 @@ char* rl_gets()
   return line_read;
 }
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-  int sockfd, servlen, n;
+  UNUSED(argc);
+
+  int sockfd, servlen;
   struct sockaddr_un serv_addr;
   char buffer[82];
 
@@ -107,7 +111,7 @@ void main(int argc, char* argv[])
 	quit = 1;
       }
       if (len > 0)
-	write(1, buffer, len);
+	len = write(1, buffer, len);                    // Ignore return value, but avoid compiler warning.
       if (quit)
       {
 	printf("Application terminated.\n");
@@ -118,13 +122,13 @@ void main(int argc, char* argv[])
 	char* line = NULL;
 	while (!line || !*line)
 	  line = rl_gets();
-	write(sockfd, line, strlen(line));
+	len = write(sockfd, line, strlen(line));        // Ignore return value, but avoid compiler warning.
       }
     }
   }
 }
 
-void error(char* msg)
+void error(char const* msg)
 {
   perror(msg);
   exit(0);

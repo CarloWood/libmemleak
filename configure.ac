@@ -27,9 +27,6 @@ AC_INIT(CW_PACKAGE_NAME, CW_VERSION_MAJOR.CW_VERSION_MINOR.CW_VERSION_REVISION, 
 dnl Put resulting configuration defines in this header file.
 AC_CONFIG_HEADERS([config.h])
 
-dnl Put revision of configure.ac in configure script.
-AC_REVISION($Revision: 20 $)dnl
-
 dnl Ensure that the directory specified with --srcdir was correct
 dnl by demanding that it contains `libmemleak.pc.in'.
 AC_CONFIG_SRCDIR([libmemleak.pc.in])
@@ -58,18 +55,14 @@ AC_SUBST(OUTPUT_DIRECTORY)
 dnl Demand at least version 2.57 of autoconf.
 AC_PREREQ(2.57)
 
-dnl Check for compiler and preprocessor
-AC_PROG_CC
+dnl Check for compilers and preprocessor.
+AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_CXXCPP
 
 dnl Add --enable-debug (DEBUG, DOXYGEN_DEBUG), --enable-optimise and --enable-profile options.
 dnl Update CFLAGS accordingly.
 CW_OPG_CFLAGS([-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline])
-
-dnl Each Makefile.am should use DEFS = @DEFS@. Set DEFS here.
-DEFS="-DHAVE_CONFIG_H"
-AC_SUBST(DEFS)
 
 dnl Suppress warning from ar by supplying U flag.
 AC_SUBST(AR_FLAGS, [cruU])
@@ -82,14 +75,11 @@ dnl Checks for other programs.
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-dnl Libtool version info
+dnl Libtool version info.
 VERSIONINFO="CW_INTERFACE_VERSION:CW_INTERFACE_VERSION_REVISION:CW_INTERFACE_AGE"
 AC_SUBST(VERSIONINFO)
 
-dnl Detect boost.
-#CW_BOOST([$cw_enable_static], [no], [])
-
-dnl Detect libbfd
+dnl Detect libbfd and libreadline.
 AC_CHECK_LIB(bfd, bfd_init, [LIBBFD=-lbfd])
 AC_CHECK_LIB(readline, readline, [LIBREADLINE=-lreadline])
 

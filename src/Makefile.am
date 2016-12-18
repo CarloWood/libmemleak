@@ -1,28 +1,11 @@
-## Process this file with automake to generate Makefile.in
-
 AUTOMAKE_OPTIONS = foreign
+SUBDIRS = rb_tree include
 
-SUBDIRS = rb_tree include .
+AM_CPPFLAGS = -I$(top_builddir)/include -I$(srcdir)/include
 
-EXTRA_DIST = ${BUILT_SOURCES}
+VERSIONINFO = @VERSIONINFO@
 
 lib_LTLIBRARIES = libmemleak.la
-VERSIONINFO = @VERSIONINFO@
-AM_CPPFLAGS = -I$(top_builddir)/include -I$(srcdir)/include
-BUILT_SOURCES =
-DEFS = @DEFS@
-CFLAGS = -g
-CXXFLAGS =
-
-bin_PROGRAMS = memleak_control
-noinst_PROGRAMS = hello
-
-memleak_control_SOURCES = memleak_control.c
-memleak_control_LDADD = @LIBREADLINE@
-memleak_CXXFLAGS = @CFLAGS@
-
-hello_SOURCES = hello.cc
-hello_CXXFLAGS = -pthread @CXXFLAGS@
 
 libmemleak_la_SOURCES = \
 	memleak.c \
@@ -30,9 +13,18 @@ libmemleak_la_SOURCES = \
 	sort.c \
 	sort.hc
 
-libmemleak_la_CFLAGS = -std=c99 @CFLAGS@
-libmemleak_la_LIBADD = @LIBBFD@
-libmemleak_la_LDFLAGS = -version-info $(VERSIONINFO) -no-undefined -Wl,--whole-archive,rb_tree/librbtree.a,--no-whole-archive
+libmemleak_la_LIBADD = rb_tree/librbtree.la @LIBBFD@
+libmemleak_la_LDFLAGS = -version-info $(VERSIONINFO) -no-undefined
+
+bin_PROGRAMS = memleak_control
+
+memleak_control_SOURCES = memleak_control.c
+memleak_control_LDADD = @LIBREADLINE@
+
+noinst_PROGRAMS = hello
+
+hello_SOURCES = hello.cc
+hello_CXXFLAGS = -pthread @CXXFLAGS@
 
 # --------------- Maintainer's Section
 
@@ -46,8 +38,10 @@ all-local:
 
 distclean-local:
 	rm -rf $(srcdir)/autom4te.cache
+	@test -L .gdbinit && rm .gdbinit
 	@MAINTAINER_MODE_TRUE@rm -f .all_sources *.s *.i *.ii
 
+DISTCLEANFILES = memleak_backtraces memleak_sock
 MAINTAINERCLEANFILES = $(srcdir)/Makefile.in tags troep* *.cgd
 
 if MAINTAINER_MODE
