@@ -41,7 +41,7 @@ dnl Check if we are the real maintainer
 AM_CONDITIONAL(REAL_MAINTAINER, test -z "$MAINTAINER_MODE_TRUE" -a -n "$TOPPROJECT")
 
 dnl Because we use cwautomacros.
-CW_AUTOMACROS([20160921])
+CW_AUTOMACROS
 
 dnl We use doxygen for documentation.
 CW_DOXYGEN
