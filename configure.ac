@@ -6,7 +6,7 @@ dnl CW_VERSION_REVISION            : Increment every public release; or set to 0
 
 define(CW_VERSION_MAJOR, 0)
 define(CW_VERSION_MINOR, 1)
-define(CW_VERSION_REVISION, 0)
+define(CW_VERSION_REVISION, 1)
 
 dnl Version info, see http://www.gnu.org/software/libtool/manual.html#Updating-version-info
 dnl

@@ -1,3 +1,8 @@
+libmemleak-0.1.1
+
+        Bug fixes.
+        Use git submodule for cwautomacros (as cwm4).
+
 libmemleak-0.1
 
         Release on github under CW.
