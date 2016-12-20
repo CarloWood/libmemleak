@@ -13,7 +13,7 @@ else
       echo "If you insist on running it and know what you are doing, then first remove the 'configure' script."
     fi
     exit 0
-  elif test ! -e cwm4/scripts/bootstrap.sh
+  elif test ! -e cwm4/scripts/bootstrap.sh; then
     echo "Houston, we have a problem: the cwm4 git submodule is missing from your source tree."
     echo "I'd suggest to clone the source code of this project from github:"
     echo "git clone --recursive https://github.com/CarloWood/libmemleak.git"
