@@ -14,7 +14,7 @@ else
     fi
     exit 0
   elif test ! -e cwm4/scripts/bootstrap.sh
-    echo "Houston, we have a problem: the cwm4 git submodule is missing from your source tree.
+    echo "Houston, we have a problem: the cwm4 git submodule is missing from your source tree."
     echo "I'd suggest to clone the source code of this project from github:"
     echo "git clone --recursive https://github.com/CarloWood/libmemleak.git"
     exit 1
