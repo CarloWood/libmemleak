@@ -1,12 +1,25 @@
 #! /bin/sh
 
 if test -d .git; then
-  # Just always bring submodules up to date.
+  # Always update the submodule(s).
   git submodule init
-  git submodule update
+  if ! git submodule update --recursive; then
+    echo "autogen.sh: Failed to update submodules. Did you make uncommitted changes?"
+    exit 1
+  fi
+  # Do more if we are the real maintainer.
+  cwm4/scripts/real_maintainer.sh 15014aea5069544f695943cfe3a5348c
+  RET=$?
+  if test $RET -eq 2; then
+    # Recursively ran autogen.sh, so we're done.
+    exit 0
+  elif test $RET -ne 0; then
+    # An error occurred.
+    exit 1
+  fi
 else
   # Clueless user check.
-  if -f configure; then
+  if test -f configure; then
     echo "You only need to run './autogen.sh' when you checked out this project from the git repository."
     echo "Just run ./configure [--help]."
     if test -e cwm4/scripts/bootstrap.sh; then
@@ -21,4 +34,5 @@ else
   fi
 fi
 
+# Run the autotool commands.
 exec cwm4/scripts/bootstrap.sh
