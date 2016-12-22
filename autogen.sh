@@ -1,20 +1,20 @@
 #! /bin/sh
 
 if test -d .git; then
+  # Update autogen.sh and cwm4 itself if we are the real maintainer.
+  if test -f cwm4/scripts/real_maintainer.sh; then
+    cwm4/scripts/real_maintainer.sh 15014aea5069544f695943cfe3a5348c
+    RET=$?
+    # A return value of 2 means success. Otherwise abort/stop returning the same value.
+    if test $RET -ne 2; then
+      echo "Exiting with code $RET"
+      exit $RET
+    fi
+  fi
   # Always update the submodule(s).
   git submodule init
   if ! git submodule update --recursive; then
-    echo "autogen.sh: Failed to update submodules. Did you make uncommitted changes?"
-    exit 1
-  fi
-  # Do more if we are the real maintainer.
-  cwm4/scripts/real_maintainer.sh 15014aea5069544f695943cfe3a5348c
-  RET=$?
-  if test $RET -eq 2; then
-    # Recursively ran autogen.sh, so we're done.
-    exit 0
-  elif test $RET -ne 0; then
-    # An error occurred.
+    echo "autogen.sh: Failed to update one or more submodules. Does it have uncommitted changes?"
     exit 1
   fi
 else
