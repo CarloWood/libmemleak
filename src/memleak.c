@@ -163,8 +163,8 @@ static int (*libc_posix_memalign)(void** memptr, size_t alignment, size_t size) 
 
 #define assert_reserve_heap_size 1024
 #define assert_reserve_ptrs_size 6
-static char allocation_heap[2048 + assert_reserve_heap_size];
-static void* allocation_ptrs[8 + assert_reserve_ptrs_size];
+static char allocation_heap[5000 + assert_reserve_heap_size];
+static void* allocation_ptrs[10 + assert_reserve_ptrs_size];
 static unsigned int allocation_counter = 0;
 static char* allocation_ptr = allocation_heap;
 
