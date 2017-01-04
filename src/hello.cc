@@ -15,10 +15,10 @@ extern "C" void interval_stop_recording(void);
 #endif
 
 void do_work(bool leak);
-void* thread_entry0(void*) { do_work(false); }
-void* thread_entry1(void*) { do_work(true); }
-void* thread_entry2(void*) { do_work(false); }
-void* thread_entry3(void*) { do_work(false); }
+void* thread_entry0(void*) { do_work(false); return NULL; }
+void* thread_entry1(void*) { do_work(true); return NULL; }
+void* thread_entry2(void*) { do_work(false); return NULL; }
+void* thread_entry3(void*) { do_work(false); return NULL; }
 void purge(void);
 #ifdef DIRECT_LINKED
 void* monitor(void*);
