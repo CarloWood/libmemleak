@@ -23,31 +23,17 @@ define(CW_INTERFACE_VERSION, 0)
 define(CW_INTERFACE_VERSION_REVISION, 2)
 define(CW_INTERFACE_AGE, 0)
 
-# Check if we are the real maintainer
-AM_CONDITIONAL(REAL_MAINTAINER, test -z "$MAINTAINER_MODE_TRUE" -a -n "$TOPPROJECT")
+# Libtool version info.
+VERSIONINFO="CW_INTERFACE_VERSION:CW_INTERFACE_VERSION_REVISION:CW_INTERFACE_AGE"
+AC_SUBST(VERSIONINFO)
 
 # We use doxygen for documentation.
 CW_DOXYGEN
-AC_CONFIG_FILES(
-        [doc/Makefile]
-        [doc/doxygen.config]
-	[doc/html.header]
-	[doc/html.footer])
-
-# Doxygen output directory.
-if test -z "$REAL_MAINTAINER_FALSE"; then
-  OUTPUT_DIRECTORY=""
-fi
-AC_SUBST(OUTPUT_DIRECTORY)
 
 # These CFLAGS are used in the .pc file.
 PCCFLAGS=
 AC_SUBST(PCCFLAGS)
 AC_CONFIG_FILES([libmemleak.pc])
-
-# Libtool version info.
-VERSIONINFO="CW_INTERFACE_VERSION:CW_INTERFACE_VERSION_REVISION:CW_INTERFACE_AGE"
-AC_SUBST(VERSIONINFO)
 
 # Detect libbfd and libreadline.
 AC_CHECK_LIB(bfd, bfd_init, [LIBBFD=-lbfd])
