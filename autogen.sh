@@ -11,13 +11,15 @@ if test "$(realpath $0)" != "$(realpath $(pwd)/autogen.sh)"; then
 fi
 
 if test -d .git; then
+  # The following line is parsed by configure.ac to find the maintainer hash.
+  MAINTAINER_HASH=15014aea5069544f695943cfe3a5348c
   # If this was a clone without --recursive, fix that fact.
   if test ! -e cwm4/scripts/bootstrap.sh; then
     git submodule update --init --recursive
   fi
   # Update autogen.sh and cwm4 itself if we are the real maintainer.
   if test -f cwm4/scripts/real_maintainer.sh; then
-    cwm4/scripts/real_maintainer.sh 15014aea5069544f695943cfe3a5348c
+    cwm4/scripts/real_maintainer.sh $MAINTAINER_HASH
     RET=$?
     # A return value of 2 means we need to continue with calling bootstrap.sh.
     # Otherwise, abort/stop returning that value.
