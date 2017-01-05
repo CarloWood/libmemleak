@@ -24,13 +24,16 @@ if test -d .git; then
     # A return value of 2 means we need to continue with calling bootstrap.sh.
     # Otherwise, abort/stop returning that value.
     if test $RET -ne 2; then
-      echo "Exiting with code $RET"
       exit $RET
     fi
-  elif ! cwm4/scripts/update_submodules.sh --recursive; then
+  fi
+  # Update all submodules.
+  if ! cwm4/scripts/update_submodules.sh --recursive; then
     echo "autogen.sh: Failed to update one or more submodules. Does it have uncommitted changes?"
     exit 1
   fi
+  # (Re)generate submodules.m4.
+  cwm4/scripts/generate_submodules_m4.sh
 else
   # Clueless user check.
   if test -f configure; then
