@@ -11,5 +11,4 @@ depcomp
 install-sh
 ltmain.sh
 missing
-lt_init.m4
-submodules.m4
+m4
