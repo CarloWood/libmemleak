@@ -1,7 +1,7 @@
+AM_CPPFLAGS = -I$(srcdir)/include
+
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = rb_tree include
-
-AM_CPPFLAGS = -I$(top_builddir)/include -I$(srcdir)/include
 
 VERSIONINFO = @VERSIONINFO@
 
