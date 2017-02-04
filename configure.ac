@@ -16,7 +16,7 @@ m4_include([cwm4/configure_ac_top.m4])
 # Add --enable-debug (DEBUG, DOXYGEN_DEBUG), --enable-optimize and --enable-profile options.
 # Update CXXFLAGS accordingly.
 # Second parameter can be [no] (single-threaded), [yes] (multi-threaded) or [both] (single and multi-threaded applications).
-CW_OPG_CFLAGS([-W -Wall -Woverloaded-virtual -Wundef -Wpointer-arith -Wwrite-strings -Winline], [yes])
+CW_OPG_CFLAGS([-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline], [yes])
 
 # Version info, see http://www.gnu.org/software/libtool/manual.html#Updating-version-info
 #
