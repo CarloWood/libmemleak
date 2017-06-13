@@ -10,13 +10,14 @@ define(CW_PACKAGE_NAME, [libmemleak])
 # Other configuration.
 define(CW_BUGREPORT, [carlo@alinoe.com])
 
+# CW_COMPILE_FLAGS may contain warning flags, but also default debug flags (-g*)
+# and optimization flags (-O*) which will be stripped when not required.
+define(CW_COMPILE_FLAGS, [-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline])
+# CW_THREADS can be [no] (single-threaded), [yes] (multi-threaded) or [both] (single and multi-threaded applications).
+define(CW_THREADS, [yes])
+
 # Include cwm4 header.
 m4_include([cwm4/configure_ac_top.m4])
-
-# Add --enable-debug (DEBUG, DOXYGEN_DEBUG), --enable-optimize and --enable-profile options.
-# Update CXXFLAGS accordingly.
-# Second parameter can be [no] (single-threaded), [yes] (multi-threaded) or [both] (single and multi-threaded applications).
-CW_OPG_CFLAGS([-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline], [yes])
 
 # Version info, see http://www.gnu.org/software/libtool/manual.html#Updating-version-info
 #
