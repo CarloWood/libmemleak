@@ -21,6 +21,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "config.h"
+
 #define _GNU_SOURCE
 #include <sys/types.h>
 #include <stdio.h>
@@ -44,12 +46,9 @@
 static rb_red_blk_tree* range_map;
 static rb_red_blk_tree* frame_map;
 
-static void addr2LineErrorHandler(char const* fmt, ...)
+static void addr2LineErrorHandler(char const* fmt, va_list ap)
 {
-  va_list ap;
-  va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
-  va_end(ap);
 }
 
 static void addr2LinePrintErr(char const* string)

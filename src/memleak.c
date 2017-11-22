@@ -40,6 +40,7 @@
 #include <sys/un.h>
 #include <errno.h>
 
+#include "config.h"
 #include "addr2line.h"
 #include "sort.h"
 
