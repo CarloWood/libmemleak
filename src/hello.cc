@@ -5,7 +5,6 @@
 #include <cstdio>
 
 extern "C" {
-#include "config.h"
 #include "addr2line.h"
 }
 

@@ -21,8 +21,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "config.h"
-
 #define _GNU_SOURCE
 #include <sys/types.h>
 #include <stdio.h>
@@ -38,6 +36,10 @@
 #include "addr2line.h"
 #include "rb_tree/red_black_tree.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"     // HAVE_PRINTF_STYLE_BFD_ERROR_HANDLER_TYPE
+#endif
+
 #define TARGET "x86_64-pc-linux-gnu"
 
 #define false 0
@@ -46,10 +48,20 @@
 static rb_red_blk_tree* range_map;
 static rb_red_blk_tree* frame_map;
 
+#if HAVE_PRINTF_STYLE_BFD_ERROR_HANDLER_TYPE
+static void addr2LineErrorHandler(char const* fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  va_end(ap);
+}
+#else
 static void addr2LineErrorHandler(char const* fmt, va_list ap)
 {
   vfprintf(stderr, fmt, ap);
 }
+#endif
 
 static void addr2LinePrintErr(char const* string)
 {
