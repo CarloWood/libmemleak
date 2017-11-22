@@ -1,35 +1,35 @@
 # Define package version here.
+#
 # CW_VERSION_MAJOR               : Increment when the whole library was rewritten; or some VERY MAJOR change was made.
 # CW_VERSION_MINOR               : Increment when major changes have occured, like removing interfaces.
 # CW_VERSION_REVISION            : Increment every public release; or set to 0 when CW_VERSION_MINOR was incremented.
+
 define(CW_VERSION_MAJOR, 0)
 define(CW_VERSION_MINOR, 1)
 define(CW_VERSION_REVISION, 1)
+
+# Package name and bug reporting.
 define(CW_PACKAGE_NAME, [libmemleak])
-
-# Other configuration.
 define(CW_BUGREPORT, [carlo@alinoe.com])
-
-# Include cwm4 header.
-m4_include([cwm4/configure_ac_top.m4])
-
-# Add --enable-debug (DEBUG, DOXYGEN_DEBUG), --enable-optimize and --enable-profile options.
-# Update CXXFLAGS accordingly.
-# Second parameter can be [no] (single-threaded), [yes] (multi-threaded) or [both] (single and multi-threaded applications).
-CW_OPG_CFLAGS([-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline], [yes])
 
 # Version info, see http://www.gnu.org/software/libtool/manual.html#Updating-version-info
 #
 # CW_INTERFACE_VERSION           : Current interface version, increment whenever the interface is changed.
 # CW_INTERFACE_VERSION_REVISION  : Revision, increment every public release; or set to 0 when the interface is changed.
 # CW_INTERFACE_AGE               : Increment if interfaces have been added; or set to 0 when interfaces have been removed.
+
 define(CW_INTERFACE_VERSION, 0)
 define(CW_INTERFACE_VERSION_REVISION, 2)
 define(CW_INTERFACE_AGE, 0)
 
-# Libtool version info.
-VERSIONINFO="CW_INTERFACE_VERSION:CW_INTERFACE_VERSION_REVISION:CW_INTERFACE_AGE"
-AC_SUBST(VERSIONINFO)
+# CW_COMPILE_FLAGS may contain warning flags, but also default debug flags (-g*)
+# and optimization flags (-O*) that which will be stripped when not required.
+define(CW_COMPILE_FLAGS, [-W -Wall -Wundef -Wpointer-arith -Wwrite-strings -Winline])
+# CW_THREADS can be [no] (single-threaded), [yes] (multi-threaded) or [both] (single and multi-threaded applications).
+define(CW_THREADS, [yes])
+
+# Include cwm4 header.
+m4_include([cwm4/configure_ac_top.m4])
 
 # We use doxygen for documentation.
 CW_DOXYGEN
