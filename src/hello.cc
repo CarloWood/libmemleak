@@ -5,6 +5,9 @@
 #include <cstdio>
 
 extern "C" {
+#ifdef HAVE_CONFIG_H
+#include "config.h"     // HAVE_PRINTF_STYLE_BFD_ERROR_HANDLER_TYPE
+#endif
 #include "addr2line.h"
 }
 
