@@ -32,7 +32,7 @@ define(CW_THREADS, [yes])
 m4_include([cwm4/configure_ac_top.m4])
 
 # We use doxygen for documentation.
-CW_DOXYGEN
+CW_DOXYGEN([])
 
 # These CFLAGS are used in the .pc file.
 PCCFLAGS=
