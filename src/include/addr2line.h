@@ -21,7 +21,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <bfd.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#include <bfd.h>        // binutils 2.28 wants a config.h to be included first.
 
 #ifndef bool
 //! @brief A boolean type.

@@ -35,12 +35,6 @@
 #include "addr2line.h"
 #include "rb_tree/red_black_tree.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"     // HAVE_PRINTF_STYLE_BFD_ERROR_HANDLER_TYPE
-#endif
-
-#include <bfd.h>        // binutils 2.28 wants a config.h to be included first.
-
 #define TARGET "x86_64-pc-linux-gnu"
 
 #define false 0
