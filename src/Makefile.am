@@ -25,6 +25,7 @@ noinst_PROGRAMS = hello
 
 hello_SOURCES = hello.cc
 hello_CXXFLAGS = -pthread @CXXFLAGS@
+hello_LDFLAGS =
 
 # --------------- Maintainer's Section
 

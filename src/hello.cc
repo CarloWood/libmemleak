@@ -9,9 +9,10 @@ extern "C" {
 }
 
 #ifdef DIRECT_LINKED
+#include <unistd.h>
 extern "C" void memleak_stats();
-extern "C" void interval_restart_recording(void);
-extern "C" void interval_stop_recording(void);
+extern "C" void interval_restart_recording();
+extern "C" void interval_stop_recording();
 #endif
 
 void do_work(bool leak);
@@ -19,7 +20,7 @@ void* thread_entry0(void*) { do_work(false); return NULL; }
 void* thread_entry1(void*) { do_work(true); return NULL; }
 void* thread_entry2(void*) { do_work(false); return NULL; }
 void* thread_entry3(void*) { do_work(false); return NULL; }
-void purge(void);
+void purge();
 #ifdef DIRECT_LINKED
 void* monitor(void*);
 int quit = 0;
@@ -92,7 +93,7 @@ void store(void* ptr)
   pthread_mutex_unlock(&mutex);
 }
 
-void* remove(void)
+void* remove()
 {
   void* ret = NULL;
   pthread_mutex_lock(&mutex);
@@ -105,7 +106,7 @@ void* remove(void)
   return ret;
 }
 
-void purge(void)
+void purge()
 {
   int count = 0;
   pthread_mutex_lock(&mutex);

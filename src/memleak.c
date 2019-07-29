@@ -45,7 +45,7 @@
 
 static void* malloc_bootstrap1(size_t size);
 static void* calloc_bootstrap1(size_t nmemb, size_t size);
-static void init(void);
+static void init();
 
 //---------------------------------------------------------------------------------------------
 // Debug stuff
@@ -117,14 +117,14 @@ static void print_ptr(void* ptrin)
   print(ptr + 1);
 }
 
-static void print_lock(void)
+static void print_lock()
 {
   pthread_mutex_lock(&print_mutex);
   print_ptr((void*)pthread_self());
   my_write(1, ": ", 2);
 }
 
-static void print_unlock(void)
+static void print_unlock()
 {
   my_write(1, "\n", 1);
   pthread_mutex_unlock(&print_mutex);
@@ -219,7 +219,7 @@ static void* realloc_bootstrap2(void* ptr, size_t size)
   return res;
 }
 
-static void init_malloc_function_pointers(void)
+static void init_malloc_function_pointers()
 {
   // Point functions to next phase.
   memleak_libc_malloc = malloc_bootstrap2;
@@ -635,7 +635,7 @@ static char* appname;
 static void* monitor(void*);
 static pthread_t monitor_thread;
 
-static void init(void)
+static void init()
 {
   // This is used in Header. Just check it here to be sure.
   assert(sizeof(intptr_t) == sizeof(void*));
@@ -752,7 +752,7 @@ time_t interval_class(time_t interval)
   return v;
 }
 
-void memleak_stats(void)
+void memleak_stats()
 {
   // Do not record memory allocated from this function.
   inside_memleak_stats = 1;
@@ -1149,9 +1149,9 @@ void* valloc(size_t size)
 
 //---------------------------------------------------------------------------------------------
 
-void delete_intervals(void);
+void delete_intervals();
 
-void interval_start_recording(void)
+void interval_start_recording()
 {
   delete_intervals();
   struct timeval tm;
@@ -1161,7 +1161,7 @@ void interval_start_recording(void)
   stats.recording = 1;
 }
 
-void interval_stop_recording(void)
+void interval_stop_recording()
 {
   if (!stats.recording)
     return;
@@ -1219,7 +1219,7 @@ void interval_delete(time_t end)
   pthread_mutex_unlock(&memleak_mutex);
 }
 
-void delete_intervals(void)
+void delete_intervals()
 {
   interval_stop_recording();
   pthread_mutex_lock(&memleak_mutex);
@@ -1240,7 +1240,7 @@ void delete_intervals(void)
   pthread_mutex_unlock(&memleak_mutex);
 }
 
-void interval_restart_recording(void)
+void interval_restart_recording()
 {
   if (!stats.recording)
   {
@@ -1270,7 +1270,7 @@ void interval_restart_recording(void)
 }
 
 static int quit = 0;
-static void terminate(void);
+static void terminate();
 static int sockfd;
 static int fd = 0;
 static char const* sockname;
@@ -1577,7 +1577,7 @@ static void* monitor(void* dummy __attribute__((unused)))
   return NULL;
 }
 
-static void terminate(void)
+static void terminate()
 {
   if (sockfd > 0)
   {

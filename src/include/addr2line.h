@@ -37,6 +37,7 @@
 // sourcefile, linenumber and function name.
 struct Addr2Line {
   char* executable;		//!< Full path of the executable or shared library (as it appears in /proc/self/maps).
+  bfd_vma some_vma;             //!< The virtual memory address of the section of the first symbol, if any. Otherwise 0.
   char* methodName;		//!< Demangled function name of decoded location.
   char const* fileName;		//!< Source file of decoded location.
   long line;			//!< Line number of decoded location.
@@ -59,10 +60,10 @@ typedef struct Addr2Line Addr2Line;
 // and calls addr2line_init_bfd for each of them, storing the
 // resulting Addr2Line object pointer in a red/black tree
 // for fast retrieval as function of a program pointer.
-void addr2line_init(void);
+void addr2line_init();
 
 //! @brief Print a backtrace with source file and line numbers.
 void addr2line_print(FILE* fbacktraces, void** backtrace, size_t backtrace_size);
 
 //! @brief Print number of cache hits.
-double frame_cache_stats(void);
+double frame_cache_stats();

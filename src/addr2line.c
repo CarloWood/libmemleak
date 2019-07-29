@@ -142,6 +142,7 @@ static Addr2Line* addr2line_init_bfd(char const* executable)
     free(self);
     return NULL;
   }
+  self->some_vma = (symcount > 0) ? self->syms[0]->section->vma : 0;
   self->needFree = self->found = false;
   self->methodName = (char*)"??";
   self->fileName = NULL;
@@ -164,6 +165,11 @@ struct Range {
 };
 
 typedef struct Range Range;
+
+static int is_no_pie(Addr2Line* self, Range* range)
+{
+  return (bfd_vma)range->begin <= self->some_vma && self->some_vma < (bfd_vma)range->end;
+}
 
 static int range_compare(void const* r1, void const* r2)
 {
@@ -219,13 +225,12 @@ static void framestr_print(void const* f1)
   printf("\"%s\"", (char const*)f1);
 }
 
-void addr2line_init(void)
+void addr2line_init()
 {
   printf("Entering addr2line_init\n");
   range_map = RBTreeCreate(range_compare, range_destroy, (void(*)(void*))addr2line_close, range_print, addr2line_print2);
   FILE* fmaps = fopen("/proc/self/maps", "r");
   assert(fmaps);
-  int first = 1;
   long offset = 0;
   char buf[512];
   buf[sizeof(buf) - 1] = 0;
@@ -259,11 +264,6 @@ void addr2line_init(void)
       range->begin = (void*)ebegin;
       range->end = (void*)eend;
       range_print(range); printf(" : %s\n", filename);
-      if (first)
-      {
-	first = 0;
-	range->begin = 0;
-      }
       RBTreeInsert(range_map, range, addr2line_init_bfd(filename));
     }
     if (rlen < sizeof(buf) - 1 - offset)
@@ -344,7 +344,7 @@ static bool addr2line_lookup(Addr2Line* self, bfd_vma pc)
 static int frame_cache_total = 0;
 static int frame_cache_hits = 0;
 
-double frame_cache_stats(void)
+double frame_cache_stats()
 {
   double ret = (double)frame_cache_hits / frame_cache_total;
   frame_cache_total = frame_cache_hits = 0;
@@ -376,7 +376,8 @@ void addr2line_print(FILE* fbacktraces, void** backtrace, size_t backtrace_size)
     if (node && (addr2line = (Addr2Line*)(node->info)))
     {
       Range* range = (Range*)node->key;
-      bool found = addr2line_lookup(addr2line, (bfd_vma)addr - (bfd_vma)range->begin);
+      // Do not substract the range begin when this isn't a Position Independent Executable.
+      bool found = addr2line_lookup(addr2line, (bfd_vma)addr - (is_no_pie(addr2line, range) ? (bfd_vma)0 : (bfd_vma)range->begin));
       if (found)
       {
 	size_t len = strlen(addr2line->methodName) + 4;
@@ -417,24 +418,65 @@ void addr2line_print(FILE* fbacktraces, void** backtrace, size_t backtrace_size)
 }
 
 #if 0
+#include "sort.h"
+Node* sort_n(Node* list, Node** last_out)
+{
+}
+
+// Compile with:
+// gcc -g -pthread -Iinclude addr2line.c memleak.c rb_tree/red_black_tree.c rb_tree/misc.c rb_tree/stack.c -lbfd -ldl
+//
+// To see the actual offset of an executable, run:
+//
+//   LD_TRACE_PRELINKING=1 ./a.out | grep '=>'
+//
+// If the offset changes when run multiple times, then Address Space Layout Randomization is on.
+// You can turn this off temporarily with:
+//
+//   $ sudo sysctl -w kernel.randomize_va_space=0
+//
+// (and on again with =1).
+// After that the offset repport with LD_TRACE_PRELINKING should be the same
+// as the one printed by ./a.out.
+//
+// For example,
+//
+// sean:~/projects/libmemleak/libmemleak/src>sudo sysctl -w kernel.randomize_va_space=0
+// kernel.randomize_va_space = 0
+// sean:~/projects/libmemleak/libmemleak/src>LD_TRACE_PRELINKING=1 ./a.out | grep '=>'
+//        ./a.out => ./a.out (0x0000555555554000, 0x0000555555554000) TLS(0x1, 0x0000000000000150)
+//        libgtk3-nocsd.so.0 => /usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0 (0x00007ffff7bce000, 0x00007ffff7bce000)
+//        libbfd-2.30-system.so => /usr/lib/x86_64-linux-gnu/libbfd-2.30-system.so (0x00007ffff787e000, 0x00007ffff787e000)
+//        libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007ffff767a000, 0x00007ffff767a000)
+//        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007ffff745b000, 0x00007ffff745b000)
+//        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ffff706a000, 0x00007ffff706a000) TLS(0x2, 0x00000000000001e0)
+//        libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007ffff6e4d000, 0x00007ffff6e4d000)
+//        /lib64/ld-linux-x86-64.so.2 => /lib64/ld-linux-x86-64.so.2 (0x00007ffff7dd5000, 0x00007ffff7dd5000)
+// sean:~/projects/libmemleak/libmemleak/src>./a.out
+// Entering addr2line_init
+// (Range){begin:0x555555554000, end:0x55555555d000} : /home/carlo/projects/libmemleak/libmemleak/src/a.out
+// (Range){begin:0x7ffff6c35000, end:0x7ffff6c4c000} : /lib/x86_64-linux-gnu/libgcc_s.so.1
+// (Range){begin:0x7ffff6e4d000, end:0x7ffff6e69000} : /lib/x86_64-linux-gnu/libz.so.1.2.11
+// (Range){begin:0x7ffff706a000, end:0x7ffff7251000} : /lib/x86_64-linux-gnu/libc-2.27.so
+// (Range){begin:0x7ffff745b000, end:0x7ffff7475000} : /lib/x86_64-linux-gnu/libpthread-2.27.so
+// (Range){begin:0x7ffff767a000, end:0x7ffff767d000} : /lib/x86_64-linux-gnu/libdl-2.27.so
+// (Range){begin:0x7ffff787e000, end:0x7ffff79ae000} : /usr/lib/x86_64-linux-gnu/libbfd-2.30-system.so
+// (Range){begin:0x7ffff7bce000, end:0x7ffff7bd4000} : /usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
+// (Range){begin:0x7ffff7dd5000, end:0x7ffff7dfc000} : /lib/x86_64-linux-gnu/ld-2.27.so
+// sockname = "/home/carlo/projects/libmemleak/libmemleak-objdir/src/memleak_sock"
+// libmemleak: Listening on "/home/carlo/projects/libmemleak/libmemleak-objdir/src/memleak_sock".
+// libmemleak: Restart multiplier set to 2
+// libmemleak: Printing memory statistics every 1 seconds.
+// #0  0000555555556f20  in main at /home/carlo/projects/libmemleak/libmemleak/src/addr2line.c:426
+//
 int main()
 {
   Addr2Line* addr2line = addr2line_init_bfd("/proc/self/exe");
   if (addr2line)
   {
-    void* addr = main;
-    bool found = addr2line_lookup(addr2line, addr);
-    printf("%p is at ", addr);
-    printf("%.16lx", addr2line->pc);
-    if (found)
-    {
-      printf(": %s", addr2line->methodName);
-      if (addr2line->fileName)
-	printf(" (%s:%ld)", addr2line->fileName, addr2line->line);
-    }
-    printf("\n");
+    void* backtrace[1] = { main };
+    addr2line_print(stdout, backtrace, 1);
     addr2line_close(addr2line);
   }
 }
 #endif
-
