@@ -33,10 +33,10 @@ the output, after a couple of minutes, will look something like this:
 
 <pre>
 hello: Now: 287;        Backtraces: 77;         allocations: 650036;    total memory: 83,709,180 bytes.
-backtrace 50 (value_n: 104636.00); [ 178, 238>(  60): 25957 allocations (1375222 total,  1.9%), size 3311982; 432.62 allocations/s, 55199 bytes/s
-backtrace 50 (value_n: 104636.00); [  55, 178>( 123): 52722 allocations (2793918 total,  1.9%), size 6734135; 428.63 allocations/s, 54749 bytes/s
-backtrace 49 (value_n: 58296.00); [ 178, 238>(  60): 14520 allocations (1382814 total,  1.1%), size 1860716; 242.00 allocations/s, 31011 bytes/s
-backtrace 49 (value_n: 58296.00); [  55, 178>( 123): 29256 allocations (2794155 total,  1.0%), size 3744938; 237.85 allocations/s, 30446 bytes/s
+backtrace 44 (value_n: 104636.00); [ 178, 238>(  60): 25957 allocations (1375222 total,  1.9%), size 3311982; 432.62 allocations/s, 55199 bytes/s
+backtrace 44 (value_n: 104636.00); [  55, 178>( 123): 52722 allocations (2793918 total,  1.9%), size 6734135; 428.63 allocations/s, 54749 bytes/s
+backtrace 41 (value_n: 58296.00); [ 178, 238>(  60): 14520 allocations (1382814 total,  1.1%), size 1860716; 242.00 allocations/s, 31011 bytes/s
+backtrace 41 (value_n: 58296.00); [  55, 178>( 123): 29256 allocations (2794155 total,  1.0%), size 3744938; 237.85 allocations/s, 30446 bytes/s
 </pre>
 
 Showing two intervals here: from 55 seconds after start till 178 seconds after start,
@@ -49,26 +49,26 @@ allocations between brackets. Finally the total amount of leaked memory
 in bytes, and the number of leaks in allocations and bytes per second
 is given.
 
-As you can see in this example, backtrace 50 leaks about twice as much as backtrace 49.
-In fact, backtrace 49 doesn't really leak at all (it just naturally causes the heap
-to grow in the beginning), but backtrace 50 does (deliberately) have a bug that causes
+As you can see in this example, backtrace 44 leaks about twice as much as backtrace 41.
+In fact, backtrace 41 doesn't really leak at all (it just naturally causes the heap
+to grow in the beginning), but backtrace 44 does (deliberately) have a bug that causes
 leaking on top of that.
 
 We can print both backtraces from `memleak_control` with the commands,
 
 <pre>
-libmemleak> dump 49
- #0  00007f84b862d33b  in malloc at /home/carlo/projects/libmemleak/libmemleak-objdir/src/../../libmemleak/src/memleak.c:1008
- #1  00000000004014da  in do_work(int)
- #2  000000000040101c  in thread_entry0(void*)
- #3  00007f84b7e7070a  in start_thread
- #4  00007f84b7b9f82d  in ?? at /build/glibc-Qz8a69/glibc-2.23/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:111
-libmemleak> dump 50
- #0  00007f84b862d33b  in malloc at /home/carlo/projects/libmemleak/libmemleak-objdir/src/../../libmemleak/src/memleak.c:1008
- #1  00000000004014da  in do_work(int)
- #2  0000000000401035  in thread_entry1(void*)
- #3  00007f84b7e7070a  in start_thread
- #4  00007f84b7b9f82d  in ?? at /build/glibc-Qz8a69/glibc-2.23/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:111
+libmemleak> dump 41
+ #0  00007f5ab45dc860  in malloc
+ #1  0000563e4f6b4592  in do_work(int) at /home/carlo/projects/libmemleak/libmemleak/src/hello.cc:157
+ #2  0000563e4f6b4070  in thread_entry0(void*) at /home/carlo/projects/libmemleak/libmemleak/src/hello.cc:19
+ #3  00007f5ab3e176db  in start_thread at /build/glibc-OTsEL5/glibc-2.27/nptl/pthread_create.c:463
+ #4  00007f5ab3b3988f  in ?? at /build/glibc-OTsEL5/glibc-2.27/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:97
+libmemleak> dump 44
+ #0  00007f5ab45dc860  in malloc
+ #1  0000563e4f6b4592  in do_work(int) at /home/carlo/projects/libmemleak/libmemleak/src/hello.cc:157
+ #2  0000563e4f6b408d  in thread_entry1(void*) at /home/carlo/projects/libmemleak/libmemleak/src/hello.cc:20
+ #3  00007f5ab3e176db  in start_thread at /build/glibc-OTsEL5/glibc-2.27/nptl/pthread_create.c:463
+ #4  00007f5ab3b3988f  in ?? at /build/glibc-OTsEL5/glibc-2.27/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:97
 </pre>
 
 So apparently the leak is caused by a call from `thread_entry1()`.

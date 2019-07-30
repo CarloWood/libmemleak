@@ -1,3 +1,7 @@
+libmemleak-0.1.2
+
+        Make backtrace dumps print function name, file name and line number again.
+
 libmemleak-0.1.1
 
         Bug fixes.

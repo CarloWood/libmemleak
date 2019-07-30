@@ -6,7 +6,7 @@
 
 define(CW_VERSION_MAJOR, 0)
 define(CW_VERSION_MINOR, 1)
-define(CW_VERSION_REVISION, 1)
+define(CW_VERSION_REVISION, 2)
 
 # Package name and bug reporting.
 define(CW_PACKAGE_NAME, [libmemleak])
@@ -19,7 +19,7 @@ define(CW_BUGREPORT, [carlo@alinoe.com])
 # CW_INTERFACE_AGE               : Increment if interfaces have been added; or set to 0 when interfaces have been removed.
 
 define(CW_INTERFACE_VERSION, 0)
-define(CW_INTERFACE_VERSION_REVISION, 2)
+define(CW_INTERFACE_VERSION_REVISION, 3)
 define(CW_INTERFACE_AGE, 0)
 
 # CW_COMPILE_FLAGS may contain warning flags, but also default debug flags (-g*)
