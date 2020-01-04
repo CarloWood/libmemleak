@@ -747,7 +747,9 @@ time_t interval_class(time_t interval)
   v |= v >> 4;
   v |= v >> 8;
   v |= v >> 16;
+#if SIZEOF_TIME_T == 8
   v |= v >> 32;
+#endif
   ++v;
   return v;
 }
