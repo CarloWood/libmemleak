@@ -3,6 +3,7 @@
 #include <inttypes.h>
 #include <deque>
 #include <cstdio>
+#include <string.h>	// for memset()
 
 extern "C" {
 #include "addr2line.h"
@@ -126,6 +127,7 @@ void do_work(bool leak)
   int32_t rvalue;
   char rstatebuf[256];
 
+  memset(&rdata, 0, sizeof(rdata)); // fix for a bug in initstate_r() impl
   initstate_r(0x1234aabc, rstatebuf, sizeof(rstatebuf), &rdata);
 
   for (int i = 0; i < 1000000000; ++i)
