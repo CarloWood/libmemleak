@@ -26,6 +26,18 @@
 #endif
 #include <bfd.h>        // binutils 2.28 wants a config.h to be included first.
 
+// Older versions of binutils (< 2.34) are using macros to access members
+// of 'asection' structure. Since 2.34, it has been replace by static inline functions.
+#if defined(bfd_get_section_flags)
+// we must undefine old macros using a different prototype
+#undef bfd_section_size
+#undef bfd_section_vma
+#undef bfd_section_flags
+static inline bfd_size_type bfd_section_size(const asection *sec) { return sec->size; }
+static inline bfd_vma       bfd_section_vma(const asection *sec) { return sec->vma; }
+static inline flagword      bfd_section_flags(const asection *sec) { return sec->flags; }
+#endif
+
 #ifndef bool
 //! @brief A boolean type.
 #define bool int

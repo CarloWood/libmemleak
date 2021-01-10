@@ -285,14 +285,14 @@ static void find_address_in_section(bfd* abfd, asection* section, void* data)
   if (x->found)
     return;
 
-  if ((bfd_get_section_flags(abfd, section) & SEC_ALLOC) == 0)
+  if ((bfd_section_flags(section) & SEC_ALLOC) == 0)
     return;
 
-  vma = bfd_get_section_vma(abfd, section);
+  vma = bfd_section_vma(section);
   if (x->pc < vma)
     return;
 
-  size = bfd_get_section_size(section);
+  size = bfd_section_size(section);
   if (x->pc >= vma + size)
     return;
 
