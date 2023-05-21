@@ -22,6 +22,6 @@ all-local: doxygen.config html.header html.footer
 	if test -n "`ls $(srcdir)/images/*.png 2>/dev/null`"; then \
 	  $(INSTALL) -m 644 $(srcdir)/images/*.png $(HTMLDIR)/images; \
 	fi
-	mv $(HTMLDIR)/doxygen.png $(HTMLDIR)/images
+	mv $(HTMLDIR)/doxygen.svg $(HTMLDIR)/images
 	test -f $(srcdir)/main.css && $(INSTALL) -m 644 $(srcdir)/main.css $(HTMLDIR)
 
