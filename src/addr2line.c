@@ -35,7 +35,8 @@
 #include "addr2line.h"
 #include "rb_tree/red_black_tree.h"
 
-#define TARGET "x86_64-pc-linux-gnu"
+// arnaudviala: the TARGET is defined in config.h (by ./configure script)
+// #define TARGET "x86_64-pc-linux-gnu"
 
 #define false 0
 #define true 1

@@ -43,8 +43,12 @@ AC_CONFIG_FILES([libmemleak.pc])
 AC_CHECK_LIB(bfd, bfd_init, [LIBBFD=-lbfd])
 AC_CHECK_LIB(readline, readline, [LIBREADLINE=-lreadline])
 
+AC_CHECK_SIZEOF([time_t])
+
 # Detect bfd_error_handler_type style.
 CW_TYPE_BFD_ERROR_HANDLER_TYPE
+
+AC_DEFINE_UNQUOTED([TARGET], ["$target_alias"], [The target architecture (must match BFD's target)])
 
 AC_SUBST(LIBBFD)
 AC_SUBST(LIBREADLINE)
